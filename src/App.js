@@ -8,6 +8,8 @@ import Logo from './components/Logo/Logo';
 import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import Rank from './components/Rank/Rank';
 import FaceRecognition from './components/FaceRecognition/FaceRecognition';
+import Signin from './components/Signin/Signin';
+import Register from './components/Register/Register';
 
 dotenv.config();
 
@@ -37,6 +39,8 @@ class App extends React.Component {
       input: '',
       imageUrl: '',
       boxLocations: [],
+      route: 'signin',
+      isSignedIn: false
     }
   }
 
@@ -67,7 +71,7 @@ class App extends React.Component {
         left: width * boundingBox.left_col,
       }
     });
-    
+
     return boxLocations;
   }
 
@@ -75,15 +79,34 @@ class App extends React.Component {
     this.setState({ boxLocations: boxLocations });
   }
 
+  onRouteChange = (route) => {
+    if (route === 'home')
+      this.setState({ isSignedIn: true });
+    else
+      this.setState({ isSignedIn: false });
+    this.setState({ route: route });
+  }
+
   render() {
+    const { isSignedIn, route, imageUrl, boxLocations } = this.state;
     return (
       <div className="App">
         <Particles className='particles' params={particleOptions} />
-        <Navigation />
-        <Logo />
-        <Rank />
-        <ImageLinkForm onInputChange={this.onInputChange} onDetectClick={this.onDetectClick} />
-        <FaceRecognition imageUrl={this.state.imageUrl} boxLocations={this.state.boxLocations} />
+        <Navigation onRouteChange={this.onRouteChange} isSignedIn={isSignedIn} />
+        {
+          route === 'signin'
+            ? <Signin onRouteChange={this.onRouteChange} />
+            : (
+              route === 'register'
+                ? <Register onRouteChange={this.onRouteChange} />
+                : <>
+                  <Logo />
+                  <Rank />
+                  <ImageLinkForm onInputChange={this.onInputChange} onDetectClick={this.onDetectClick} />
+                  <FaceRecognition imageUrl={imageUrl} boxLocations={boxLocations} />
+                </>
+            )
+        }
       </div>
     );
   }
