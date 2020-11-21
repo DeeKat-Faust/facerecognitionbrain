@@ -1,5 +1,4 @@
 import React from 'react';
-import Clarifai from 'clarifai';
 import dotenv from 'dotenv';
 import './App.css';
 import Particles from 'react-particles-js';
@@ -13,12 +12,6 @@ import Register from './components/Register/Register';
 
 dotenv.config();
 
-// const Clarifai = require('clarifai');
-
-const clarifaiApp = new Clarifai.App({
-  apiKey: process.env.REACT_APP_CLARIFAI_API_KEY
-});
-
 const particleOptions = {
   particles: {
     number: {
@@ -31,28 +24,30 @@ const particleOptions = {
   }
 }
 
+const initialState = {
+  input: '',
+  imageUrl: '',
+  boxLocations: [],
+  route: 'signin',
+  isSignedIn: false,
+  user: {
+    id: '',
+    email: '',
+    name: '',
+    entries: '',
+    joined: ''
+  }
+}
+
 class App extends React.Component {
 
   constructor() {
     super();
-    this.state = {
-      input: '',
-      imageUrl: '',
-      boxLocations: [],
-      route: 'signin',
-      isSignedIn: false,
-      user: {
-        id: '',
-        email: '',
-        name: '',
-        entries: '',
-        joined: ''
-      }
-    }
+    this.state = initialState;
   }
 
   componentDidMount() {
-    // fetch('http://localhost:3010/')
+    // fetch('https://smartbrainfacedetector-api.herokuapp.com/')
     //   .then(response => response.json())
     //   .then(console.log)
   }
@@ -64,10 +59,15 @@ class App extends React.Component {
   onPictureSubmit = (event) => {
     this.setState({ imageUrl: this.state.input });
 
-    clarifaiApp.models.initModel({ id: Clarifai.FACE_DETECT_MODEL })
-      .then(faceModel => faceModel.predict(this.state.input))
+    fetch('https://smartbrainfacedetector-api.herokuapp.com/imageurl', {
+      method: 'post',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        input: this.state.input
+      })
+    }).then(response => response.json())
       .then(response => {
-        fetch('http://localhost:3010/image', {
+        fetch('https://smartbrainfacedetector-api.herokuapp.com/image', {
           method: 'put',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -77,7 +77,9 @@ class App extends React.Component {
           .then(count => {
             this.setState(Object.assign(this.state.user, {entries: count}))
           })
-        this.displayFaceBox(this.calculateFaceLocation(response));
+        if (response !== 'API is unavailable') {
+          this.displayFaceBox(this.calculateFaceLocation(response));
+        }
       });
   }
 
@@ -108,7 +110,7 @@ class App extends React.Component {
     if (route === 'home')
       this.setState({ isSignedIn: true });
     else
-      this.setState({ isSignedIn: false, imageUrl: '' });
+      this.setState(initialState);
     this.setState({ route: route });
   }
 

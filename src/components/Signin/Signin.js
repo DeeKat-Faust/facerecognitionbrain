@@ -25,7 +25,7 @@ class Signin extends React.Component {
         if (!this.state.signInEmail.length) {
             this.setState({ error: 'Email field is empty' });
         } else {
-            fetch('http://localhost:3010/signin', {
+            fetch('https://smartbrainfacedetector-api.herokuapp.com/signin', {
                 method: 'post',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

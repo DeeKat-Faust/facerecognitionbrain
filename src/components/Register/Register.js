@@ -34,7 +34,7 @@ class Register extends React.Component {
         } else if (this.state.password.length < 8) {
             this.setState({ error: 'Password must be atleast 8 characters in length' });
         } else {
-            fetch('http://localhost:3010/register', {
+            fetch('https://smartbrainfacedetector-api.herokuapp.com/register', {
                 method: 'post',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
