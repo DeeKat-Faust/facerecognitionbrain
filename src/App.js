@@ -49,10 +49,9 @@ class App extends React.Component {
     // fetch('https://smartbrainfacedetector-api.herokuapp.com/')
     //   .then(response => response.json())
     //   .then(console.log)
-
-    fetch("https://smartbrainfacedetector-api.herokuapp.com/")
-      .then((response) => response.json())
-      .then(console.log);
+    // fetch("https://smartbrainfacedetector-api.herokuapp.com/")
+    //   .then((response) => response.json())
+    //   .then(console.log);
   }
 
   onInputChange = (event) => {
